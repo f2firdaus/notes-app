@@ -1,48 +1,55 @@
+import { FontAwesome } from '@expo/vector-icons';
 import {
     View,
     Text,
     StyleSheet,
     TouchableOpacity,
-    SafeAreaView,
+  
     FlatList,
 } from "react-native";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import React, { useState } from "react";
 import AddNoteModal from "@/components/AddNoteModal";
 
 const NoteScreen = () => {
     const [show, setShow] = useState(false);
     const [note, setNote] = useState([
-        {
-            id: 1,
-            text: "first Note",
-        },
-        {
-            id: 2,
-            text: "second note",
-        },
-        {
-            id: 3,
-            text: "first Note",
-        },
-        {
-            id: 4,
-            text: "second note",
-        },
-        
     ]);
     const [input, setInput] = useState("");
+    const [updateData, setUpdateData] = useState(null);
+
+    const handleDelete = (id) => {
+   
+        const filtered = note.filter((idx) => idx.id !== id);
+        setNote(filtered);
+
+    }
+    const handleEdit = (item) => {
+     
+        setInput(item.text);
+        setUpdateData(item);
+        setShow(true)
+    }
     return (
         <>
             {show ? (
-                <AddNoteModal setShow={setShow} input={input} setInput={setInput} />
+                <AddNoteModal updateData={ updateData} setShow={setShow} input={input} setInput={setInput} setUpdateData={setUpdateData} setNote={setNote} note={note} />
             ) : (
+                    
+                        
+            
             
                         <View style={styles.container}>
                             <FlatList data={note}
                                 keyExtractor={(item) => item.id}
                                 renderItem={({ item }) => (
                                     <View style={styles.maindata}>
-                                        <Text style={styles.datatext}>{item.text }</Text>
+                                        <Text style={styles.datatext}>{item.text} </Text>
+                                        <View style={{display:'flex',flexDirection:'row',justifyContent:'center',gap:14}}>
+                                       <FontAwesome name="edit" size={24} color="black" onPress={() => handleEdit(item)} />
+                                     <FontAwesome name="trash" size={24} color="red" onPress={() => handleDelete(item.id)} />
+                                            </View>
+                                       
                                     </View>
                                 )}
                             />
@@ -51,7 +58,7 @@ const NoteScreen = () => {
                     </TouchableOpacity>
                     </View>
 
-                   
+                     
               
             )}
         </>
@@ -74,7 +81,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
         marginVertical: 5,
         borderRadius: 6,
-        padding:15
+        padding: 15,
+        alignItems:'center'
     },
 
     btn: {

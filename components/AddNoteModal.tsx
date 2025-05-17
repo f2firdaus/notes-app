@@ -7,20 +7,46 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-interface Props{
-  setshow:boolean
-}
-const AddNoteModal =({ setShow, input, setInput }) => {
+// interface Props{
+//   setshow:boolean()=>void
+// }
+const AddNoteModal =({ setShow, input, setInput,setNote,note,updateData,setUpdateData }) => {
 
-    const handleTodo = () => {
+  
+  const handleTodo = () => {
+    if (input.trim().length === 0)
+      
+      return;
+    if (!updateData) {
       if (input.trim().length !== 0) {
    
+        setShow(false);
+        setNote(prev => [...prev, {
+          id: Date.now(),
+          text: input,
+          completed: false
+        }])
+       
+        console.log(note)
+        setInput('')
+      }
+    } else {
+      setNote(prev =>
+        prev.map(n =>
+          n.id === updateData.id ? { ...n, text: input } : n
+        )
+      );
+  
+      setInput('');
       setShow(false);
-   
+      setUpdateData(null);
+
     }
       
+      
     
-    }
+  }
+  
    
  
   
@@ -28,7 +54,7 @@ const AddNoteModal =({ setShow, input, setInput }) => {
     <Modal animationType="slide" transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Add a New Note</Text>
+          <Text style={styles.modalTitle}>{updateData?"Update a New Note":"Add a New Note" }</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter note..."
@@ -42,7 +68,7 @@ const AddNoteModal =({ setShow, input, setInput }) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.saveButton} onPress={handleTodo}>
-              <Text style={styles.saveButtonText} >Save</Text>
+              <Text style={styles.saveButtonText} >{updateData?"update":"Save" }</Text>
             </TouchableOpacity>
           </View>
         </View>
